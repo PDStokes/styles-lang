@@ -1,47 +1,34 @@
-import filterClasses from './src/filterClasses';
-import parseToSass from './src/parseToSass';
-// import filterCss from './src/filterCss';
-import sass from 'node-sass';
+import stylesLang from './src/main';
+import { HotModuleReplacementPlugin } from 'webpack';
 
 export default function nuxtStylesLang (moduleOptions) {
 
-    const rootPath = moduleOptions.rootPath || '/';
+    const rootPath = moduleOptions.rootPath || '/',
+        pathPattern = moduleOptions.pathPattern;
 
-    const cssPath = () => {
-        for (const item of this.options.css) {
-            if (item.includes('styles-core')) {
-                return item;
-            }
+    let cssCorePath = '';
+
+    for (const item of this.options.css) {
+        if (item.includes('styles-core')) {
+            cssCorePath = item;
         }
-
-        return '';
-    };
-
-    let classList = [],
-        stylesSass,
-        stylesCss;
-
-    classList = filterClasses(moduleOptions.pathPattern);
-
-    if (classList) {
-        stylesSass = parseToSass(classList);
-
-        const stylesCore = sass.renderSync({
-            file: rootPath + '/node_modules/' + cssPath(),
-        });
-
-        stylesSass = stylesCore.css.toString() + stylesSass;
-
-        stylesCss = sass.renderSync({
-            data: stylesSass,
-        });
-
-        console.info(stylesCss.css.toString());
-
-        // console.info(filterCss(stylesCss.css.toString()));
-
     }
+
+    stylesLang(rootPath, cssCorePath, pathPattern, this);
+
+    // this.extendBuild((config, { isDev }) => {
+    //     if (isDev) {
+    //         this.options.plugins.push(
+    //             new HotModuleReplacementPlugin()
+    //         );
+    //     }
+    // });
+
+    // this.nuxt.hook('render:done', () => {
+    //     console.info(module.hot);
+    // });
 
 }
 
-// module.exports.meta = require('./package.json');
+module.exports.meta = require('./package.json');
+

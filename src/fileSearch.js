@@ -3,7 +3,7 @@ import fs from 'fs';
 
 export default (appDir) => {
     appDir || '**/*(.vue|.html)';
-    const regex = new RegExp(/(?:[^:]class=)(?:["']\W+\s*(?:\w+)\()?["']([^'"]+)['"]/, 'g');
+    const regex = new RegExp(/(?:[^:]class=)["']([^'"]+)['"]/, 'g');
     let classList = [];
     let files = glob.sync(appDir);
 
